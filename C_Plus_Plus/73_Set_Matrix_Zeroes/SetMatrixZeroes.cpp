@@ -63,13 +63,42 @@ public:
     }
 };
 
+void printMatrix(const vector<vector<int>>& matrix)
+{
+    for(vector<int> row : matrix)
+    {
+        for(int val : row)
+            cout << val << " ";
+        cout << endl;
+    }
+}
+
 main(int argc, char** argv)
 {
     Solution sol;
     vector<vector<int>> case1{{1,1,1},{1,0,1},{1,1,1}};
     vector<vector<int>> case2{{0,1,2,0},{3,4,5,2},{1,3,1,5}};
-    vector<vector<int>> case2{{1,2,3,4},{5,0,7,8},{0,10,11,12},{13,14,15,0}};
+    vector<vector<int>> case3{{1,2,3,4},{5,0,7,8},{0,10,11,12},{13,14,15,0}};
 
+    cout << "Initial Case 1:" << endl;
+    printMatrix(case1);
     sol.setZeroes(case1);
+    cout << "======== \n" << "Post Case 1:" << endl;
+    printMatrix(case1);
+    cout << "\n\n";
+
+    cout << "Initial Case 2:" << endl;
+    printMatrix(case2);
+    sol.setZeroes(case2);
+    cout << "======== \n" << "Post Case 2:" << endl;
+    printMatrix(case2);
+    cout << "\n\n";
+
+    cout << "Initial Case 3:" << endl;
+    printMatrix(case3);
+    sol.setZeroes(case3);
+    cout << "======== \n" << "Post Case 3:" << endl;
+    printMatrix(case3);
+    cout << "\n\n";
     return 0;
 }
