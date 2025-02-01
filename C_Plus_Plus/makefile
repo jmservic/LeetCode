@@ -1,4 +1,4 @@
-CXXFLAGS := -g -Wall -std=c++20
+CXXFLAGS := -ggdb -Wall -std=c++20 -O0
 TARGET ?= TwoSums
 SRC := $(wildcard \
 			$(addprefix */,			\
