@@ -7,7 +7,7 @@ class Solution {
 public:
     bool isAnagram(string s, string t) {
         if(s.length() != t.length()) return false;
-        int map[26];
+        int map[26] = {0};
         for_each(s.cbegin(), s.cend(), [&map](char c){++map[c - 'a'];});
 
         for(char c : t)
