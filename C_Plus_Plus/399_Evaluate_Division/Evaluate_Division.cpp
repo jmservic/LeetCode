@@ -22,12 +22,6 @@ class Solution {
 public:
     vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
         unordered_map<string, mult_var> varMap = unordered_map<string, mult_var>();
-        sort(equations.begin(), equations.end(),[] (vector<string> eq1, vector<string> eq2) 
-        {
-            string smallerEq1op = (eq1[0] < eq1[1]) ? eq1[0] : eq1[1];
-            string smallerEq2op = (eq2[0] < eq2[1]) ? eq2[0] : eq2[1];
-            return smallerEq1op < smallerEq2op;
-        });
         defineEqualities(varMap, equations, values);
 
         vector<double> results = vector<double>();
@@ -47,22 +41,58 @@ public:
         for(int i = 0; i < equations.size(); ++i)
         {
             string op1 = equations[i][0], op2 = equations[i][1];
-            bool containsOp1 = varMap.contains(op1), containsOp2 = varMap.contains(op2);
-            //If both operands are defined, continue
-            if(containsOp1 && containsOp2) continue;
-            //If both operands are not defined, define the second as itself, and continue
-            //to the case where only the first 1 isn't define.
-            if(!containsOp1 && !containsOp2)
+            double value = values[i];
+            defineEquality(op1, op2, value, varMap);
+        }
+        
+        //Loop again to redefine backwards...
+        for(int i = equations.size() - 1; i >= 0 ; --i)
+        {
+            string op1 = equations[i][0], op2 = equations[i][1];
+            double value = values[i];
+            defineEquality(op1, op2, value, varMap);
+        }
+
+        //Loop through the equations
+        for(int i = 0; i < equations.size(); ++i)
+        {
+            string op1 = equations[i][0], op2 = equations[i][1];
+            double value = values[i];
+            defineEquality(op1, op2, value, varMap);
+        }      
+    }
+
+    void defineEquality(string op1, string op2, double value, unordered_map<string, mult_var> &varMap)
+    {
+        
+        bool containsOp1 = varMap.contains(op1), containsOp2 = varMap.contains(op2);
+        //If both operands are defined, continue
+        if(containsOp1 && containsOp2) 
+        {
+            if(varMap[op1].variable == varMap[op2].variable)
+                return;
+            else if(varMap[op1].variable < varMap[op2].variable)
             {
-                varMap[op2] = mult_var(1, op2);
-                containsOp2 = true;
-            }
-            //If only the first isn't defined, define it in terms of the second
-            if(!containsOp1 && containsOp2)
-                varMap[op1] = mult_var((values[i] * varMap[op2].multiplier), varMap[op2].variable);                
-            else if (containsOp1 && !containsOp2) //If only the second isn't defined, define it in terms of the first.
-                varMap[op2] = mult_var((1 / values[i]) * varMap[op1].multiplier, varMap[op1].variable);
-        }   
+                varMap.erase(op2);
+                containsOp2 = false;
+            } else 
+            {
+                varMap.erase(op1);
+                containsOp1 = false;
+            }       
+        }
+        //If both operands are not defined, define the second as itself, and continue
+        //to the case where only the first 1 isn't define.
+        if(!containsOp1 && !containsOp2)
+        {
+            varMap[op2] = mult_var(1, op2);
+            containsOp2 = true;
+        }
+        //If only the first isn't defined, define it in terms of the second
+        if(!containsOp1 && containsOp2)
+            varMap[op1] = mult_var((value * varMap[op2].multiplier), varMap[op2].variable);                
+        else if (containsOp1 && !containsOp2) //If only the second isn't defined, define it in terms of the first.
+            varMap[op2] = mult_var((1 / value) * varMap[op1].multiplier, varMap[op1].variable);
     }
 
     double calcQuery(const unordered_map<string, mult_var> &varMap, const vector<string> &query)
@@ -85,9 +115,9 @@ public:
 };
 
 int main() {
-    vector<vector<string>> equations = {{"a","b"},{"a","c"},{"d","e"},{"d","f"},{"a","d"},{"aa","bb"},{"aa","cc"},{"dd","ee"},{"dd","ff"},{"aa","dd"},{"a","aa"}};
-    vector<double> values = {2.0,3.0,4.0,5.0,7.0,5.0,8.0,9.0,3.0,2.0,2.0};//{2.0, 3.0};
-    vector<vector<string>> queries = {{"ff","a"}};//{{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}};
+    vector<vector<string>> equations = {{"a","b"},{"c","b"},{"d","b"},{"w","x"},{"y","x"},{"z","x"},{"w","d"}};
+    vector<double> values = {2.0,3.0,4.0,5.0,6.0,7.0,8.0};//{2.0, 3.0};
+    vector<vector<string>> queries = {{"a","c"},{"b","c"},{"a","e"},{"a","a"},{"x","x"},{"a","z"}};//{{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}};
     Solution sol;
     sol.calcEquation(equations, values, queries);
     return 0;
