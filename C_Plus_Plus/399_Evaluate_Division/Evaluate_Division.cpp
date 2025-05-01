@@ -19,6 +19,7 @@ class Solution {
         }
         mult_var() {}
     } mult_var;
+    
 public:
     vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
         unordered_map<string, mult_var> varMap = unordered_map<string, mult_var>();
