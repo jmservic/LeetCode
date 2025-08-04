@@ -68,10 +68,3 @@ public:
  * bool param_2 = obj->search(word);
  * bool param_3 = obj->startsWith(prefix);
  */
-
- int main() 
- {
-    Trie trie;
-    trie.insert("apple");
-    trie.startsWith("app");
- }
